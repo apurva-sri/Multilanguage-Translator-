@@ -1,5 +1,6 @@
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
+const chalk = require("chalk");
 const User = require("../models/User");
 
 async function signup(req, res) {
@@ -15,13 +16,14 @@ async function signup(req, res) {
   const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
     expiresIn: "30d",
   });
+  console.log(chalk.cyan.bold(`👤 New user registered: ${email}`));
   res.json({
     token,
     user: { id: user._id, email: user.email, name: user.name, role: user.role },
   });
-};
+}
 
-async function login(req, res){
+async function login(req, res) {
   const { email, password } = req.body;
   const user = await User.findOne({ email });
   if (!user) return res.status(400).json({ message: "Invalid credentials" });
@@ -29,8 +31,14 @@ async function login(req, res){
   const ok = await bcrypt.compare(password, user.passwordHash);
   if (!ok) return res.status(400).json({ message: "Invalid credentials" });
 
-  const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: "30d" });
-  res.json({ token, user: { id: user._id, email: user.email, name: user.name, role: user.role } });
-};
+  const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
+    expiresIn: "30d",
+  });
+  console.log(chalk.magenta.bold(`🔐 User logged in: ${email}`));
+  res.json({
+    token,
+    user: { id: user._id, email: user.email, name: user.name, role: user.role },
+  });
+}
 
 module.exports = { signup, login };

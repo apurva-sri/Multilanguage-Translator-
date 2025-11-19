@@ -1,4 +1,5 @@
 const Translation = require("../models/Translation");
+const chalk = require("chalk");
 const { translateWithFallback } = require("../utils/translator");
 
 async function translateText(req, res) {
@@ -28,11 +29,16 @@ async function translateText(req, res) {
       modelUsed: model,
     });
 
+    console.log(
+      chalk.greenBright.bold(
+        `📝 Translation completed: ${from} → ${to} using ${model}`
+      )
+    );
     res.json({ translated, model });
   } catch (err) {
-    console.error("Translate error:", err);
+    console.error(chalk.red.bold("❌ Translate error:"), err.message);
     res.status(500).json({ message: "Translation failed" });
   }
-};
+}
 
 module.exports = { translateText };

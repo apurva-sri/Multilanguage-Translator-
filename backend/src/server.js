@@ -3,12 +3,12 @@ const express = require("express");
 const cors = require("cors");
 const helmet = require("helmet");
 const morgan = require("morgan");
-const connectDB = require("./config/db");
-const authRoutes = require("./routes/auth");
-const translateRoutes = require("./routes/translate");
-const analyticsRoutes = require("./routes/analytics");
-const auth = require("./middleware/auth");
 const chalk = require("chalk");
+const connectDB = require("./config/db");
+const authRoutes = require("./routes/authRoutes");
+const translateRoutes = require("./routes/translateRoute");
+const analyticsRoutes = require("./routes/analyticsRoute");
+const auth = require("./middleware/auth");
 
 const app = express();
 app.use(helmet());
@@ -29,4 +29,6 @@ app.use("/api/analytics", analyticsRoutes);
 app.get("/", (req, res) => res.send("Translation backend running"));
 
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => console.log(chalk.blue.bold(`Server on ${PORT}`)));
+app.listen(PORT, () =>
+  console.log(chalk.blue.bold(`🚀 Server running on port ${PORT}`))
+);

@@ -1,6 +1,7 @@
 # ignore environment files
 .env
 *.env
+.env.example
 
 # ignore node modules everywhere
 node_modules/
