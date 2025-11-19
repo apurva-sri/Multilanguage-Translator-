@@ -1,3 +1,4 @@
+// store visits for analytics and unique counts.
 const mongoose = require('mongoose');
 
 const VisitSchema = new mongoose.Schema({

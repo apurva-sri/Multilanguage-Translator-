@@ -1,3 +1,4 @@
+// role field controls language access.
 const mongoose = require("mongoose");
 
 const UserSchema = new mongoose.Schema({
