@@ -17,34 +17,31 @@ async function translateText(req, res) {
   }
 
   try {
-    const response = await axios.post(
-      "https://libretranslate.com/translate",
+    const response = await axios.get(
+      "https://api.mymemory.translated.net/get",
       {
-        q: text,
-        source: from,
-        target: to,
-        format: "text",
-      },
-      {
-        headers: {
-          "Content-Type": "application/json",
+        params: {
+          q: text,
+          langpair: `${from}|${to}`,
         },
+        timeout: 15000,
       }
     );
 
-    // Log the full response from LibreTranslate for debugging
-    console.log("LibreTranslate response:", response.data);
+    // console.log("MyMemory Response:", response.data);
 
-    if (!response.data || !response.data.translatedText) {
+    if (!response.data || !response.data.responseData) {
       console.log("Unexpected API response:", response.data);
-      return res
-        .status(500)
-        .json({ message: "Translation API error", apiResponse: response.data });
+      return res.status(500).json({
+        message: "Translation API error",
+        apiResponse: response.data,
+      });
     }
 
-    const translated = response.data.translatedText;
+    const translated = response.data.responseData.translatedText;
 
     console.log("Parsed translated text:", translated);
+
     // Save to DB
     await Translation.create({
       userId: req.user ? req.user._id : null,
@@ -52,18 +49,18 @@ async function translateText(req, res) {
       to,
       sourceText: text,
       translatedText: translated,
-      modelUsed: "LibreTranslate-FreeAPI",
+      modelUsed: "MyMemory-FreeAPI",
     });
 
     console.log(
       chalk.greenBright.bold(
-        `📝 FREE Translation DONE: ${from} → ${to} using LibreTranslate`
+        `📝 FREE Translation DONE: ${from} → ${to} using MyMemory`
       )
     );
 
     res.json({
       translated,
-      model: "LibreTranslate-FreeAPI",
+      model: "MyMemory-FreeAPI",
     });
   } catch (err) {
     console.error(
